@@ -1,5 +1,6 @@
 cat > Main.cpp << 'EOF'
 #include <iostream>
+#include <stdlib.h>
 #include "Instruccion.hpp"
 #include "InstruccionSet.hpp"
 #include "Program.hpp"
@@ -7,10 +8,12 @@ cat > Main.cpp << 'EOF'
 #include "ALU.hpp"
 #include "Registros.hpp"
 
-int main()
+using namespace std;
+
+int main(void)
 {
-    std::cout << "=== MAQUINA VIRTUAL CON REGISTROS ===" << std::endl;
-    
+    cout << "=== MAQUINA VIRTUAL CON REGISTROS ===" << endl << endl;
+
     // Crear instrucciones
     Instruccion start("START", 50, 0);
     Instruccion add("ADD", 80, 2);
@@ -20,34 +23,34 @@ int main()
     Instruccion mov("MOV", 90, 2);
     Instruccion sto("STO", 91, 2);
     Instruccion stop("STOP", 51, 0);
-    
+
     // Cargar programa
     Program program;
-    program.addInstruction(start, 0, 0);   // START
-    program.addInstruction(mov, 50, 0);    // MOV AL, 50
-    program.addInstruction(mov, 30, 0);    // MOV AL, 30
-    program.addInstruction(add, 50, 30);   // ADD 50 + 30
-    program.addInstruction(sub, 100, 40);  // SUB 100 - 40
-    program.addInstruction(mul, 5, 6);     // MUL 5 * 6
-    program.addInstruction(div, 100, 4);   // DIV 100 / 4
-    program.addInstruction(sto, 80, 200);  // STO 200, 80
-    program.addInstruction(stop, 0, 0);    // STOP ← IMPORTANTE
-    
+    program.addInstruction(start, 0, 0);   // 0: START
+    program.addInstruction(mov, 5, 0);     // 1: MOV AL, 5
+    program.addInstruction(mov, 3, 0);     // 2: MOV AL, 3
+    program.addInstruction(add, 5, 3);     // 3: ADD 5 + 3
+    program.addInstruction(sub, 10, 4);    // 4: SUB 10 - 4
+    program.addInstruction(mul, 2, 3);     // 5: MUL 2 * 3
+    program.addInstruction(div, 20, 2);    // 6: DIV 20 / 2
+    program.addInstruction(sto, 100, 200); // 7: STO 100 en dir 200
+    program.addInstruction(stop, 0, 0);    // 8: STOP
+
     // Mostrar programa
-    std::cout << "Programa cargado (" << program.getSize() << " instrucciones):" << std::endl;
+    cout << "Programa cargado (" << program.getSize() << " instrucciones):" << endl;
     for (int i = 0; i < program.getSize(); i++) {
-        std::cout << "  " << i << ": " << program.getInstruction(i).getName();
+        cout << "  " << i << ": " << program.getInstruction(i).getName();
         if (program.getOperand1(i) != 0 || program.getOperand2(i) != 0) {
-            std::cout << " (" << program.getOperand1(i) << ", " << program.getOperand2(i) << ")";
+            cout << " (" << program.getOperand1(i) << ", " << program.getOperand2(i) << ")";
         }
-        std::cout << std::endl;
+        cout << endl;
     }
-    
+
     // Ejecutar programa
-    std::cout << "\n=== EJECUTANDO PROGRAMA ===" << std::endl;
+    cout << "\n=== EJECUTANDO PROGRAMA ===" << endl;
     CU unidadControl;
     unidadControl.run(program);
-    
-    return 0;
+
+    return EXIT_SUCCESS;
 }
 EOF
