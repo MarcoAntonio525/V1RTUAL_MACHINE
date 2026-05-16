@@ -1,4 +1,3 @@
-cat > CU.cpp << 'EOF'
 #include "CU.hpp"
 #include <iostream>
 
@@ -8,12 +7,11 @@ CU::CU(std::string theStatus) : status(theStatus) {}
 
 Instruccion CU::fetch(Program& theProgram)
 {
-    int pc_actual = reg.getPC();
-    reg.setMAR(pc_actual);
-    Instruccion inst = theProgram.getInstruction(pc_actual);
+    reg.setMAR(reg.getPC());
+    Instruccion inst = theProgram.getInstruction(reg.getMAR());
     reg.setMBR(inst.getCode());
     reg.setIR(reg.getMBR());
-    reg.setPC(pc_actual + 1);  // Incrementar PC manualmente
+    reg.incrementPC();
     return inst;
 }
 
@@ -40,31 +38,36 @@ void CU::execute(int theCode, int operand1, int operand2)
     
     switch (theCode)
     {
-        case 50:
+        case 50:  // START - YA NO HACE RESET
             std::cout << "=== INICIO DEL PROGRAMA ===" << std::endl;
             status = "running";
-            reg.reset();
+            // reg.reset();  // COMENTADO para que no reinicie el PC
             break;
-        case 51:
+            
+        case 51:  // STOP
             std::cout << "=== FIN DEL PROGRAMA ===" << std::endl;
             status = "stopped";
             break;
-        case 80:
+            
+        case 80:  // ADD
             result = alu.add(operand1, operand2);
             reg.setAC(result);
             std::cout << "ADD: " << operand1 << " + " << operand2 << " = " << result << std::endl;
             break;
-        case 81:
+            
+        case 81:  // SUB
             result = alu.sub(operand1, operand2);
             reg.setAC(result);
             std::cout << "SUB: " << operand1 << " - " << operand2 << " = " << result << std::endl;
             break;
-        case 82:
+            
+        case 82:  // MUL
             result = alu.mul(operand1, operand2);
             reg.setAC(result);
             std::cout << "MUL: " << operand1 << " * " << operand2 << " = " << result << std::endl;
             break;
-        case 83:
+            
+        case 83:  // DIV
             if (operand2 != 0) {
                 result = alu.div(operand1, operand2);
                 reg.setAC(result);
@@ -73,15 +76,18 @@ void CU::execute(int theCode, int operand1, int operand2)
                 std::cout << "Error: Division entre cero" << std::endl;
             }
             break;
-        case 90:
+            
+        case 90:  // MOV
             reg.setAL(operand1);
             std::cout << "MOV: AL = " << operand1 << std::endl;
             break;
-        case 91:
+            
+        case 91:  // STO
             reg.setMAR(operand2);
             reg.setMBR(operand1);
             std::cout << "STO: Memoria[" << reg.getMAR() << "] = " << reg.getMBR() << std::endl;
             break;
+            
         default:
             std::cout << "Error: Instruccion desconocida (codigo: " << theCode << ")" << std::endl;
             break;
@@ -103,7 +109,7 @@ void CU::run(Program& theProgram)
         
         std::cout << "\n--- FETCH ---" << std::endl;
         Instruccion inst = fetch(theProgram);
-        std::cout << "PC (antes de fetch): " << (reg.getPC() - 1) << std::endl;
+        std::cout << "PC: " << (reg.getPC() - 1) << std::endl;
         std::cout << "IR: " << reg.getIR() << " (Instruccion: " << inst.getName() << ")" << std::endl;
         std::cout << "MAR: " << reg.getMAR() << std::endl;
         std::cout << "MBR: " << reg.getMBR() << std::endl;
@@ -123,8 +129,6 @@ void CU::run(Program& theProgram)
         std::cout << "\n--- ESTADO DE REGISTROS ---" << std::endl;
         reg.display();
         
-        std::cout << "PC despues del ciclo: " << reg.getPC() << std::endl;
-        
         if (code == 51) break;
     }
     
@@ -134,4 +138,3 @@ void CU::run(Program& theProgram)
 void CU::displayRegistros() const {
     reg.display();
 }
-EOF
