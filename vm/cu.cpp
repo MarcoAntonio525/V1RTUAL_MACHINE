@@ -1,3 +1,4 @@
+cat > CU.cpp << 'EOF'
 #include "CU.hpp"
 #include <iostream>
 
@@ -7,17 +8,17 @@ CU::CU(std::string theStatus) : status(theStatus) {}
 
 Instruccion CU::fetch(Program& theProgram)
 {
-    reg.setMAR(reg.getPC());
-    Instruccion inst = theProgram.getInstruction(reg.getMAR());
+    int pc_actual = reg.getPC();
+    reg.setMAR(pc_actual);
+    Instruccion inst = theProgram.getInstruction(pc_actual);
     reg.setMBR(inst.getCode());
     reg.setIR(reg.getMBR());
-    reg.incrementPC();
+    reg.setPC(pc_actual + 1);  // Incrementar PC manualmente
     return inst;
 }
 
 int CU::decode(const Instruccion& theInstruction)
 {
-    // Decodificar directamente por el nombre de la instrucción
     std::string name = theInstruction.getName();
     
     if (name == "START") return 50;
@@ -102,7 +103,7 @@ void CU::run(Program& theProgram)
         
         std::cout << "\n--- FETCH ---" << std::endl;
         Instruccion inst = fetch(theProgram);
-        std::cout << "PC: " << (reg.getPC() - 1) << std::endl;
+        std::cout << "PC (antes de fetch): " << (reg.getPC() - 1) << std::endl;
         std::cout << "IR: " << reg.getIR() << " (Instruccion: " << inst.getName() << ")" << std::endl;
         std::cout << "MAR: " << reg.getMAR() << std::endl;
         std::cout << "MBR: " << reg.getMBR() << std::endl;
@@ -122,6 +123,8 @@ void CU::run(Program& theProgram)
         std::cout << "\n--- ESTADO DE REGISTROS ---" << std::endl;
         reg.display();
         
+        std::cout << "PC despues del ciclo: " << reg.getPC() << std::endl;
+        
         if (code == 51) break;
     }
     
@@ -131,3 +134,4 @@ void CU::run(Program& theProgram)
 void CU::displayRegistros() const {
     reg.display();
 }
+EOF
