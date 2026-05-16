@@ -15,7 +15,6 @@ void Registros::reset() {
     AC = 0;
 }
 
-// Proposito General
 int Registros::getAL() const { return AL; }
 void Registros::setAL(int value) { AL = value; }
 
@@ -28,7 +27,6 @@ void Registros::setBL(int value) { BL = value; }
 int Registros::getBH() const { return BH; }
 void Registros::setBH(int value) { BH = value; }
 
-// Proposito Específico
 int Registros::getPC() const { return PC; }
 void Registros::setPC(int value) { PC = value; }
 void Registros::incrementPC() { PC++; }
@@ -46,12 +44,16 @@ int Registros::getAC() const { return AC; }
 void Registros::setAC(int value) { AC = value; }
 
 void Registros::display() const {
-    std::cout << "=== REGISTROS ===" << std::endl;
-    std::cout << "Propósito General:" << std::endl;
-    std::cout << "  AL=" << AL << " AH=" << AH << std::endl;
-    std::cout << "  BL=" << BL << " BH=" << BH << std::endl;
-    std::cout << "Propósito Específico:" << std::endl;
-    std::cout << "  PC=" << PC << " IR=" << IR << std::endl;
-    std::cout << "  MAR=" << MAR << " MBR=" << MBR << std::endl;
-    std::cout << "  AC=" << AC << std::endl;
+    std::cout << "=====================" << std::endl;
+    std::cout << "REGISTROS:" << std::endl;
+    std::cout << "  [Propósito General]" << std::endl;
+    std::cout << "    AL = " << AL << "   AH = " << AH << std::endl;
+    std::cout << "    BL = " << BL << "   BH = " << BH << std::endl;
+    std::cout << "  [Propósito Específico]" << std::endl;
+    std::cout << "    PC  = " << PC << std::endl;
+    std::cout << "    IR  = " << IR << std::endl;
+    std::cout << "    MAR = " << MAR << std::endl;
+    std::cout << "    MBR = " << MBR << std::endl;
+    std::cout << "    AC  = " << AC << std::endl;
+    std::cout << "=====================" << std::endl;
 }
