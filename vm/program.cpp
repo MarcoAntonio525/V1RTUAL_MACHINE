@@ -1,3 +1,4 @@
+cat > Program.cpp << 'EOF'
 #include "Program.hpp"
 
 Program::Program() {}
@@ -23,3 +24,4 @@ int Program::getOperand2(int index) const {
 int Program::getSize() const {
     return instrucciones.size();
 }
+EOF
