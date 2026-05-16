@@ -1,3 +1,4 @@
+cat > Program.hpp << 'EOF'
 #ifndef PROGRAM_HPP
 #define PROGRAM_HPP
 
@@ -16,7 +17,8 @@ public:
     Instruccion getInstruction(int index) const;
     int getOperand1(int index) const;
     int getOperand2(int index) const;
-    int getSize() const;
+    int getSize() const;  // ← Mayúscula S
 };
 
 #endif
+EOF
