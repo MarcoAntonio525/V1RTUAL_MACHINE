@@ -9,17 +9,24 @@ CU::CU(std::string theStatus) : status(theStatus) {}
 Instruccion CU::fetch(Program& theProgram)
 {
     int pc_actual = reg.getPC();
+    std::cout << "[DEBUG fetch] PC actual = " << pc_actual << std::endl;
+    
     reg.setMAR(pc_actual);
     Instruccion inst = theProgram.getInstruction(pc_actual);
     reg.setMBR(inst.getCode());
     reg.setIR(reg.getMBR());
-    reg.setPC(pc_actual + 1);
+    
+    int nuevo_pc = pc_actual + 1;
+    reg.setPC(nuevo_pc);
+    std::cout << "[DEBUG fetch] Nuevo PC = " << nuevo_pc << std::endl;
+    
     return inst;
 }
 
 int CU::decode(const Instruccion& theInstruction)
 {
     std::string name = theInstruction.getName();
+    std::cout << "[DEBUG decode] Instruccion: " << name << std::endl;
     
     if (name == "START") return 50;
     if (name == "STOP") return 51;
@@ -94,20 +101,18 @@ void CU::run(Program& theProgram)
     reg.setPC(0);
     
     std::cout << "\n=== MAQUINA VIRTUAL INICIADA ===" << std::endl;
-    std::cout << "Tamaño del programa: " << theProgram.getSize() << std::endl;
+    std::cout << "[DEBUG] Tamaño del programa: " << theProgram.getSize() << std::endl;
     
     while (status == "running" && reg.getPC() < theProgram.getSize())
     {
-        int ciclo = reg.getPC() + 1;
-        std::cout << "\n========== CICLO " << ciclo << " ==========" << std::endl;
-        std::cout << "PC antes de fetch: " << reg.getPC() << std::endl;
+        std::cout << "\n========== INICIO CICLO ==========" << std::endl;
+        std::cout << "[DEBUG] PC al inicio del ciclo: " << reg.getPC() << std::endl;
+        std::cout << "[DEBUG] Status: " << status << std::endl;
         
         std::cout << "\n--- FETCH ---" << std::endl;
         Instruccion inst = fetch(theProgram);
         std::cout << "PC despues de fetch: " << reg.getPC() << std::endl;
         std::cout << "IR: " << reg.getIR() << " (Instruccion: " << inst.getName() << ")" << std::endl;
-        std::cout << "MAR: " << reg.getMAR() << std::endl;
-        std::cout << "MBR: " << reg.getMBR() << std::endl;
         
         std::cout << "\n--- DECODE ---" << std::endl;
         int code = decode(inst);
@@ -124,7 +129,13 @@ void CU::run(Program& theProgram)
         std::cout << "\n--- ESTADO DE REGISTROS ---" << std::endl;
         reg.display();
         
-        if (code == 51) break;
+        std::cout << "[DEBUG] PC al final del ciclo: " << reg.getPC() << std::endl;
+        std::cout << "[DEBUG] Status al final: " << status << std::endl;
+        
+        if (code == 51) {
+            std::cout << "[DEBUG] Break por STOP" << std::endl;
+            break;
+        }
     }
     
     std::cout << "\n=== PROGRAMA FINALIZADO ===" << std::endl;
